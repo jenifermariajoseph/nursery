@@ -1,0 +1,125 @@
+/* Base navbar */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+/* Left: logo + brand */
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 auto;
+}
+
+.nav-logo img {
+  height: 70px;
+  width: auto;
+  display: block;
+}
+
+.nav-logo p {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  color: #222;
+  letter-spacing: 0.3px;
+}
+
+/* Middle: navigation menu */
+.nav-menu {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 auto;     /* makes menu take middle space */
+  gap: 70px;
+  margin: 0;
+  margin-left: 20px;
+  color: #333;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+/* anchor styling for nav items */
+.nav-menu li a {
+  color: inherit !important;          /* use the parent text color */
+  text-decoration: none !important;   /* remove underline */
+  display: inline-block;              /* keeps hr underline working nicely */
+  transition: color 200ms ease;
+}
+   
+
+
+/* Underline hr style */
+.nav-menu li hr {
+  border: none;
+  height: 2px;
+  width: 24px;              /* underline length */
+  background-color: #0b7;   /* underline color */
+  margin: 4px auto 0;       /* center under text */
+  opacity: 0;               /* hidden by default */
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+
+/* Show underline on hover */
+.nav-menu li:hover hr {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+/* Optional: show underline for active item */
+.nav-menu li.active hr {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+/* Right: login + cart */
+.nav-login-cart {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  margin-left: 32px;  /* adds explicit gap from menu */
+}
+
+.nav-login-cart button {
+  width:157px;
+  height:58px;
+  gap:20px;
+  outline: none;
+  border-radius: 75px;
+  border: 1px solid #dcdcdc;
+  background: #f8f8f8;
+  /* color: #333; */
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.nav-login-cart button:hover {
+  background: #f0f0f0;
+  border-color: #c8c8c8;
+}
+
+.nav-login-cart img {
+  height: 24px;
+  width: auto;
+  display: block;
+}
+
+/* Optional: page content offset for fixed navbar */
+body {
+  padding-top: 60px;
+}

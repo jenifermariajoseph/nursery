@@ -1,0 +1,61 @@
+.category-carousel {
+  padding: 28px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.cc-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.cc-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #111;
+}
+
+.cc-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.cc-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 1px solid #dcdcdc;
+  background: #f8f8f8;
+  color: #111;
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cc-track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(240px, 1fr);
+  gap: 18px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 6px;
+}
+
+.cc-card {
+  scroll-snap-align: start;
+}
+
+@media (max-width: 768px) {
+  .category-carousel {
+    padding: 24px 16px;
+  }
+  .cc-title {
+    font-size: 22px;
+  }
+  .cc-track {
+    grid-auto-columns: minmax(220px, 80%);
+  }
+}

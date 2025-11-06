@@ -1,0 +1,46 @@
+.popular-section {
+  padding: 36px 24px 60px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.popular-heading {
+  padding-top: 12px;
+  margin: 0 0 18px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #111;
+  text-align: left;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+}
+
+.popular-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(240px, 1fr)); /* exactly 4 items */
+  gap: 20px;
+}
+
+@media (max-width: 900px) {
+  .popular-grid {
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+  }
+}
+@media (max-width: 520px) {
+  .popular-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .popular-section {
+    padding: 28px 16px 48px;
+  }
+  .popular-heading {
+    font-size: 24px;
+  }
+  .popular-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}

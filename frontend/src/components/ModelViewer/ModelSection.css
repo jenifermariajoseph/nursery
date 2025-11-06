@@ -1,0 +1,180 @@
+.model-section {
+  padding: 40px 24px 60px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.model-heading {
+  margin: 0 0 16px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #111;
+  text-align: left;
+}
+
+.model-wrapper {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: transparent;  /* no black box */
+  box-shadow: none;
+}
+
+model-viewer {
+  display: block;
+  width: 100%;
+  height: 480px;
+  background-color: transparent;
+  --poster-color: transparent;
+}
+
+/* Bottom controls */
+.model-controls {
+  position: static;        /* no overlay */
+  left: auto;
+  right: auto;
+  bottom: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  z-index: auto;
+  padding-top: 0;
+  margin-top: 12px;        /* space between viewer and buttons */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  z-index: 2;
+}
+
+.model-label {
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.10);
+  font-weight: 700;
+  font-size: 14px;
+  color: #0f1213;
+}
+
+.mv-btn {
+
+    padding-top: 12px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: none;
+  background: #1f8a52;          /* primary accent */
+  color: #fff;
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(31,138,82,0.35);
+  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+
+.mv-btn:hover { transform: translateY(-1px); }
+.mv-btn:active { transform: translateY(0); box-shadow: 0 6px 16px rgba(31,138,82,0.28); }
+
+/* Keep badges as-is; ensure they don't overlap bottom controls */
+.mv-badge--bottom { right: 120px; bottom: 64px; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .mv-badge--bottom { right: 60px; bottom: 56px; }
+}
+
+@media (max-width: 520px) {
+  .model-label { font-size: 13px; padding: 7px 12px; }
+  .mv-btn { padding: 9px 16px; font-size: 13px; }
+  .mv-badge--bottom { right: 40px; bottom: 56px; }
+}
+
+/* Floating badges */
+.mv-badge {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+  border: 1px solid rgba(0,0,0,0.06);
+  min-width: 200px;         /* bigger box */
+  opacity: 0;
+  transform: translateY(6px);
+  animation: mvBadgeIn 400ms ease forwards;
+}
+
+.mv-badge-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #eef7f1;
+  display: grid;
+  place-items: center;
+  font-size: 22px;           /* bigger icon */
+}
+
+.mv-badge-value {
+  font-weight: 800;
+  font-size: 16.5px;         /* bigger text */
+  color: #0f1213;
+  line-height: 1.2;
+}
+
+.mv-badge-label {
+  font-size: 12px;
+  color: #58606a;
+}
+
+/* Positions to match your reference */
+.mv-badge--left {
+  left: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+  animation-delay: 80ms;
+}
+
+.mv-badge--right {
+  right: 28px;
+  top: 80px;
+  animation-delay: 160ms;
+}
+
+.mv-badge--bottom {
+  right: 120px;
+  bottom: 40px;
+  animation-delay: 240ms;
+}
+
+@keyframes mvBadgeIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  model-viewer { height: 420px; }
+  .mv-badge { padding: 12px 18px; min-width: 180px; }
+  .mv-badge-icon { width: 40px; height: 40px; font-size: 20px; }
+  .mv-badge--right { top: 60px; }
+  .mv-badge--bottom { right: 60px; bottom: 24px; }
+}
+
+@media (max-width: 520px) {
+  model-viewer { height: 360px; }
+  .mv-badge { padding: 10px 16px; min-width: 165px; }
+  .mv-badge-icon { width: 36px; height: 36px; font-size: 18px; }
+  .mv-badge-text { font-size: 15px; }
+}
+
+/* New: single-line benefit text */
+.mv-badge-text {
+  font-weight: 700;
+  font-size: 14px;
+  color: #0f1213;
+}
+

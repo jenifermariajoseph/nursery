@@ -1,0 +1,140 @@
+@import url("https://fonts.cdnfonts.com/css/pp-neue-montreal");
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: "PP Neue Montreal", sans-serif;
+}
+img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.1s ease-out;
+    transform-origin: center center;
+}
+
+h1,
+a,
+p, 
+h2 { /* Added h2 */
+    /* FIX 5: Removed invalid character '■' */
+    color: #fff; 
+    font-weight: 500;
+    line-height: 100%;
+    letter-spacing: -0.02rem;
+    -webkit-font-smoothing: antialiased;
+}
+h1{
+    text-indent: 8rem;
+    font-size: large;
+}
+a,p{
+    text-decoration: none;
+    font-size: medium;
+}
+
+/* --- Section Setup --- */
+section {
+    position: relative;
+    width: 100vw;
+    height: 100svh;
+    padding: 1.5em;
+    overflow: hidden;
+    /* Default background for non-intro/outro sections if needed */
+    background-color: #333; 
+}
+
+/* FIX 6: Apply dark background to see text on intro/outro */
+#intro { 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #141414;
+    height: 100svh;
+    padding: 1.5em;
+}
+
+/* FIX 7: Crucial for ScrollTrigger to work - requires extra scroll space */
+.sticky.slider {
+    position: relative;
+    height: 200svh; /* Increased height to allow pinning and scrolling */
+    background-color: #141414; /* Maintain dark background */
+}
+
+/* --- Image Containers --- */
+/* FIX 8: Corrected selector grouping by adding a comma */
+.slide-images,
+.img,
+.img-container, 
+.strip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* --- Slide Info & Text Layout --- */
+.slide-info {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 100vw;
+    padding: 1.5em;
+    display: flex;
+    gap: 2em;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    z-index: 10; /* Ensure text is above image strips */
+}
+
+.slide-info > * {
+    flex: 1 ;
+}
+
+/* FIX 9: Target h2 inside slide-title */
+.slide-title h2 {
+    font-size: 36px;
+    will-change: transform;
+    line-height: 1.2;
+}
+
+.slide-links {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.slide-title {
+    position: relative;
+    flex: 2;
+    height: 40px;
+    overflow: hidden; /* Hide titles during animation */
+}
+
+/* FIX 10: Corrected clip-path syntax (removed space after 'polygon') */
+.slide-title p{
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+}
+
+/* Media Query adjustments */
+@media (max-width: 1000px) {
+    /* Adjustments for mobile styling if needed */
+    h1 {
+        font-size: 8em; /* Adjusted value for better mobile sizing */
+    }
+    .slide-info {
+        flex-direction: column;
+        gap: 1em;
+        top: 80%;
+    }
+    .slide-title h2 {
+        font-size: 24px;
+    }
+    .slide-info p,
+    .slide-links a {
+        font-size: 16px;
+    }
+}
