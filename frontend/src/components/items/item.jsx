@@ -1,36 +1,30 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { useCart } from '../../context/useCart'
 import './item.css'
 
 export default function Item(props) {
-  const { id, image, name, new_price, old_price, bestSeller } = props;
+  const { image, name, new_price, old_price, bestSeller } = props;
   // Calculate percentage off dynamically
   const hasDiscount = old_price != null && Number(old_price) > Number(new_price);
   const discountPct = hasDiscount
     ? Math.round((1 - Number(new_price) / Number(old_price)) * 100)
     : 0;
 
+  const { add, refresh } = useCart()
   const [added, setAdded] = React.useState(false)
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     try {
-      const itemToAdd = {
-        id: id ?? `${name}-${new_price}`,
-        name,
-        image,
-        price: Number(new_price),
-        old_price: old_price != null ? Number(old_price) : undefined,
-        qty: 1,
-      }
-      const raw = localStorage.getItem('cart')
-      const cart = raw ? JSON.parse(raw) : []
-      const idx = cart.findIndex((i) => i.id === itemToAdd.id)
-      if (idx >= 0) {
-        cart[idx].qty += 1
-      } else {
-        cart.push(itemToAdd)
-      }
-      localStorage.setItem('cart', JSON.stringify(cart))
+      await add({
+        sessionId: 'anon',
+        productId: props.id,
+        name: props.name,
+        price_cents: Math.round(Number(props.new_price) * 100),
+        image_url: props.image, // NEW: send image for backend storage
+        quantity: 1,
+      })
+      await refresh('anon')
       setAdded(true)
       setTimeout(() => setAdded(false), 1200)
     } catch (e) {
@@ -76,11 +70,10 @@ export default function Item(props) {
       </Link>
 
       <div className="item-body">
-        {/* Keep the add to cart outside the link for better UX */}
         <button
           className="item-add-btn"
           onClick={handleAddToCart}
-          aria-label={`Add ${name} to cart`}
+          aria-label={`Add ${props.name} to cart`}
         >
           Add to cart
         </button>

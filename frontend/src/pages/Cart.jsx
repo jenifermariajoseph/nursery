@@ -1,72 +1,27 @@
 import React from 'react'
 import './cart.css'
-
-function loadCart() {
-  try {
-    const raw = localStorage.getItem('cart')
-    return raw ? JSON.parse(raw) : []
-  } catch {
-    return []
-  }
-}
-
-function saveCart(items) {
-  localStorage.setItem('cart', JSON.stringify(items))
-}
-
-function formatCurrency(n) {
-  const v = Number(n || 0)
-  return `₹${v.toFixed(2)}`
-}
+import { useCart } from '../context/useCart'
 
 export default function Cart() {
-  const [items, setItems] = React.useState(() => {
-    const arr = loadCart()
-    // Merge duplicates by id+options
-    const map = new Map()
-    for (const it of arr) {
-      const key = `${it.id}-${JSON.stringify(it.options || {})}`
-      const prev = map.get(key)
-      if (prev) {
-        prev.qty = Number(prev.qty || 1) + Number(it.qty || 1)
-      } else {
-        map.set(key, { ...it, qty: Number(it.qty || 1) })
-      }
-    }
-    const merged = Array.from(map.values())
-    saveCart(merged)
-    return merged
-  })
-  const [coupon, setCoupon] = React.useState('')
-  const [couponApplied, setCouponApplied] = React.useState(false)
-  // Add shipping method state and computed shipping cost
+  const { items, subtotal, refresh, update, remove } = useCart()
+  const [couponApplied] = React.useState(false)
   const [shippingMethod, setShippingMethod] = React.useState('free')
-  const shippingCost = shippingMethod === 'flat' ? 10 : shippingMethod === 'pickup' ? 15 : 0
 
-  const updateItems = (next) => {
-    setItems(next)
-    saveCart(next)
+  React.useEffect(() => { refresh() }, [refresh])
+  const clearCart = async () => {
+    for (const it of items) {
+      await remove(it.id)
+    }
+    await refresh()
   }
 
-  const changeQty = (idx, delta) => {
-    const next = [...items]
-    const item = next[idx]
-    const newQty = Math.max(1, (item.qty || 1) + delta)
-    item.qty = newQty
-    updateItems(next)
+  const formatCurrency = (n) => {
+    const v = Number(n || 0)
+    return `₹${v.toFixed(2)}`
   }
-
-  const removeItem = (idx) => {
-    const next = items.filter((_, i) => i !== idx)
-    updateItems(next)
-  }
-
-  const clearCart = () => {
-    updateItems([])
-  }
-  const subtotal = items.reduce((sum, it) => sum + Number(it.price || 0) * Number(it.qty || 1), 0)
-  const discount = couponApplied ? subtotal * 0.10 : 0
-  const orderTotal = Math.max(0, subtotal - discount) + shippingCost
+  const subtotalRs = subtotal / 100
+  const discount = 0 // keep coupon logic if needed
+  const orderTotal = Math.max(0, subtotalRs - discount)
 
   return (
     <section className="cart-page" aria-label="Shopping cart">
@@ -84,7 +39,6 @@ export default function Cart() {
         </div>
       ) : (
         <div className="cart-content">
-          {/* Left: table */}
           <div className="cart-table-wrap">
             <table className="cart-table">
               <colgroup>
@@ -104,79 +58,48 @@ export default function Cart() {
                 </tr>
               </thead>
               <tbody>
-                {items.map((it, idx) => (
-                  <tr key={`${it.id}-${idx}`}>
+                {items.map((it) => (
+                  <tr key={it.id}>
                     <td className="cell-remove">
                       <button
-                        className="remove-btn"
                         aria-label={`Remove ${it.name}`}
-                        onClick={() => removeItem(idx)}
-                        title="Remove"
+                        onClick={() => remove(it.id)}
                       >
-                        ×
+                        ✕
                       </button>
                     </td>
-
                     <td className="cell-product">
-                      <img className="cart-thumb" src={it.image} alt={it.name} />
-                      <div className="cart-item-info">
-                        <div className="cart-item-name">{it.name}</div>
-                        {it.options && (
-                          <div className="cart-item-options">
-                            {Object.entries(it.options).map(([k, v]) => (
-                              <span key={k} className="opt-pill">{k}: {String(v)}</span>
-                            ))}
-                          </div>
-                        )}
+                      <div className="prod-cell">
+                        <img src={it.image_url || '/images/placeholder.png'} alt={it.name} />
+                        <div className="prod-meta">
+                          <div className="prod-title">{it.name}</div>
+                        </div>
                       </div>
                     </td>
-
-                    <td className="cell-price">{formatCurrency(it.price)}</td>
-
+                    <td className="cell-price">{formatCurrency(it.price_cents / 100)}</td>
                     <td className="cell-qty">
                       <div className="qty-control">
-                        <button aria-label="Decrease quantity" onClick={() => changeQty(idx, -1)}>−</button>
-                        <span>{it.qty || 1}</span>
-                        <button aria-label="Increase quantity" onClick={() => changeQty(idx, 1)}>＋</button>
+                        <button onClick={() => update(it.id, Math.max(1, it.quantity - 1))}>−</button>
+                        <span>{it.quantity}</span>
+                        <button onClick={() => update(it.id, it.quantity + 1)}>+</button>
                       </div>
                     </td>
-
                     <td className="cell-subtotal">
-                      {formatCurrency(Number(it.price || 0) * Number(it.qty || 1))}
+                      {formatCurrency((it.price_cents * it.quantity) / 100)}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-
-            {/* Bottom tools: coupon */}
-            <div className="cart-tools">
-              <div className="coupon-group">
-                <input
-                  id="coupon"
-                  value={coupon}
-                  onChange={(e) => setCoupon(e.target.value)}
-                  placeholder="Coupon code"
-                />
-                <button
-                  className="apply-coupon"
-                  onClick={() => setCouponApplied(coupon.trim().toUpperCase() === 'SAVE10')}
-                >
-                  Apply coupon
-                </button>
-              </div>
-            </div>
           </div>
 
           {/* Right: totals card */}
           <aside className="cart-summary">
             <h2 className="summary-title">Cart totals</h2>
-
             <div className="summary-row">
               <span>Subtotal</span>
-              <span>{formatCurrency(subtotal)}</span>
+              <span>{formatCurrency(subtotalRs)}</span>
             </div>
-
             {couponApplied && (
               <div className="summary-row">
                 <span>Discount</span>
@@ -228,7 +151,6 @@ export default function Cart() {
               <span>Total</span>
               <span className="gt">{formatCurrency(orderTotal)}</span>
             </div>
-
             <button className="checkout-btn" onClick={() => alert('Checkout not implemented')}>
               Proceed to checkout
             </button>

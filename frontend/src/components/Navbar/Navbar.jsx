@@ -2,9 +2,21 @@ import React, { useState } from 'react'
 import './Navbar.css'
 import logo from '../assets/logo.png'
 import cart_icon from '../assets/cart_icon.png'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../../context/auth'
+import { useCart } from '../../context/useCart'
+
 const Navbar = () => {
   const [menu, setMenu] = useState('Home')
+  const { user, logout } = useAuth()
+  const { refresh } = useCart()
+  const navigate = useNavigate()
+
+  const handleLogout = async () => {
+    logout()
+    await refresh('anon')
+    navigate('/')
+  }
   return (
     <div className="navbar">
         <div className="nav-logo">
@@ -26,9 +38,13 @@ const Navbar = () => {
             </li> */}
         </ul>
         <div className="nav-login-cart">
-            <Link to="/loginsignup">
-              <button>Login</button>
-            </Link>
+            {user ? (
+              <button onClick={handleLogout}>Logout</button>
+            ) : (
+              <Link to="/loginsignup">
+                <button>Login</button>
+              </Link>
+            )}
             <Link to="/cart">
               <img src={cart_icon} alt="Cart Icon"/>
             </Link>

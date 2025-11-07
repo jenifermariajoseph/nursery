@@ -1,61 +1,36 @@
 import React from 'react'
+import { useAuth } from '../context/auth'
 import './loginsignup.css'
 import { useNavigate } from 'react-router-dom'
+import { useCart } from '../context/useCart'
 
-function LoginSignup() {
+export default function LoginSignup() {
   const [mode, setMode] = React.useState('signup')
   const [name, setName] = React.useState('')
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
   const [agree, setAgree] = React.useState(false)
-  const [error, setError] = React.useState('')
+  const { login, register } = useAuth()
+  const { refresh } = useCart()
   const navigate = useNavigate()
+  const [msg, setMsg] = React.useState(null)
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    setError('')
-
-    if (mode === 'signup') {
-      if (!name.trim()) return setError('Please enter your name.')
-      if (!email.trim()) return setError('Please enter your email.')
-      if (!password.trim()) return setError('Please enter a password.')
-      if (!agree) return setError('Please agree to the terms.')
-
-      try {
-        const raw = localStorage.getItem('users') || '[]'
-        const users = JSON.parse(raw)
-        if (users.find((u) => u.email === email.trim().toLowerCase())) {
-          return setError('Email already registered. Try logging in.')
-        }
-        const user = {
-          id: `u-${Date.now()}`,
-          name: name.trim(),
-          email: email.trim().toLowerCase(),
-          password: password,
-        }
-        users.push(user)
-        localStorage.setItem('users', JSON.stringify(users))
-        localStorage.setItem('auth', JSON.stringify({ email: user.email }))
-        navigate('/')
-      } catch (err) {
-        setError('Could not complete signup. Please try again.')
+    try {
+      const sessionId = 'anon'
+      if (mode === 'login') {
+        await login(email, password, sessionId)
+      } else {
+        await register(email, password)
+        await login(email, password, sessionId)
       }
-    } else {
-      if (!email.trim() || !password.trim()) {
-        return setError('Please enter email and password.')
-      }
-      try {
-        const raw = localStorage.getItem('users') || '[]'
-        const users = JSON.parse(raw)
-        const user = users.find(
-          (u) => u.email === email.trim().toLowerCase() && u.password === password
-        )
-        if (!user) return setError('Invalid credentials. Please try again.')
-        localStorage.setItem('auth', JSON.stringify({ email: user.email }))
-        navigate('/')
-      } catch (err) {
-        setError('Could not log in. Please try again.')
-      }
+      await refresh() // load user cart using the token
+      navigate('/')   // redirect to Home
+      setMsg('Signed in successfully')
+      // Optional: after auth, navigate or refresh cart page
+    } catch (err) {
+      setMsg('Failed: ' + err.message)
     }
   }
 
@@ -134,11 +109,9 @@ function LoginSignup() {
             </label>
           )}
 
-          {error && <div className="ls-error" role="alert">{error}</div>}
+          {msg && <div className="ls-error" role="alert">{msg}</div>}
         </form>
       </div>
     </section>
   )
 }
-
-export default LoginSignup

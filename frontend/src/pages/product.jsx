@@ -1,4 +1,5 @@
 import React from 'react'
+import { useCart } from '../context/useCart'
 import { useParams, Link } from 'react-router-dom'
 import './product.css'
 import plant_collections from '../components/assets/plant_collections'
@@ -24,6 +25,7 @@ export default function Product() {
     allPlants.find((p) => String(p.name) === String(productId)) ||
     null
 
+  const { add, refresh } = useCart()
   const [selectedImgIndex, setSelectedImgIndex] = React.useState(0)
   const gallery = React.useMemo(() => {
     const g = product?.gallery
@@ -37,28 +39,18 @@ export default function Product() {
   const [qty, setQty] = React.useState(1)
   const [added, setAdded] = React.useState(false)
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!product) return
     try {
-      const itemToAdd = {
-        id: product.id ?? product.name,
+      await add({
+        sessionId: 'anon',
+        productId: product.id,
         name: product.name,
-        image: product.image,
-        price: Number(product.new_price),
-        old_price: product.old_price != null ? Number(product.old_price) : undefined,
-        qty,
-        options: { size, color },
-      }
-      const raw = localStorage.getItem('cart')
-      const cart = raw ? JSON.parse(raw) : []
-      const key = (i) => `${i.id}-${JSON.stringify(i.options||{})}`
-      const idx = cart.findIndex((i) => key(i) === key(itemToAdd))
-      if (idx >= 0) {
-        cart[idx].qty += qty
-      } else {
-        cart.push(itemToAdd)
-      }
-      localStorage.setItem('cart', JSON.stringify(cart))
+        price_cents: Math.round(Number(product.new_price) * 100),
+        image_url: product.image, // NEW: send image for backend storage
+        quantity: qty,
+      })
+      await refresh('anon')
       setAdded(true)
       setTimeout(() => setAdded(false), 1200)
     } catch (e) {
