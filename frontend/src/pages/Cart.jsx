@@ -1,12 +1,30 @@
 import React from 'react'
 import './cart.css'
 import { useCart } from '../context/useCart'
+import plant_collections from '../components/assets/plant_collections'
+import { succulentsCacti, herbs, tropical, lowLight, veggies } from '../components/assets/plant_category_items'
 
 export default function Cart() {
   const { items, subtotal, refresh, update, remove } = useCart()
   const [couponApplied] = React.useState(false)
   const [shippingMethod, setShippingMethod] = React.useState('free')
 
+  // Build a stable name -> image fallback map (uses current build assets)
+  const nameToImage = React.useMemo(() => {
+    const all = [
+      ...succulentsCacti,
+      ...herbs,
+      ...tropical,
+      ...lowLight,
+      ...veggies,
+      ...plant_collections,
+    ]
+    const m = {}
+    for (const p of all) {
+      if (p.name && p.image) m[p.name] = p.image
+    }
+    return m
+  }, [])
   React.useEffect(() => { refresh() }, [refresh])
   const clearCart = async () => {
     for (const it of items) {
@@ -70,7 +88,11 @@ export default function Cart() {
                     </td>
                     <td className="cell-product">
                       <div className="prod-cell">
-                        <img src={it.image_url || '/images/placeholder.png'} alt={it.name} />
+                        <img
+                          className="cart-thumb"
+                          src={it.image_url || nameToImage[it.name] || '/images/placeholder.png'}
+                          alt={it.name}
+                        />
                         <div className="prod-meta">
                           <div className="prod-title">{it.name}</div>
                         </div>
