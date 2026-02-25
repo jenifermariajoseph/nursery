@@ -1,10 +1,13 @@
 # 🌿 Nursery — Full-Stack Plant Store (Flagship Project)
 
 **Live Store (Frontend):** [https://nursery-sigma.vercel.app/](https://nursery-sigma.vercel.app/)
+
 **Business Analytics Dashboard (Tableau):**
 [https://public.tableau.com/app/profile/jenifer.maria.joseph/viz/nursery-dash/Dashboard1?publish=yes](https://public.tableau.com/app/profile/jenifer.maria.joseph/viz/nursery-dash/Dashboard1?publish=yes)
+
 **Dashboard (GitHub):**
 [https://github.com/jenifermariajoseph/Nursery_Dashboard](https://github.com/jenifermariajoseph/Nursery_Dashboard)
+
 **Backend:** Node.js + Express (to be deployed)
 **Database:** PostgreSQL (in progress)
 
